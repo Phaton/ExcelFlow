@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelTwineroFlow", "ExcelTwineroFlow.csproj", "{8F0C885E-A300-41D8-8B8B-66A9F2D3ABEC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F0C885E-A300-41D8-8B8B-66A9F2D3ABEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F0C885E-A300-41D8-8B8B-66A9F2D3ABEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F0C885E-A300-41D8-8B8B-66A9F2D3ABEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F0C885E-A300-41D8-8B8B-66A9F2D3ABEC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA7FCB0F-B613-4472-B3C2-835BA87CDB7A}
+	EndGlobalSection
+EndGlobal
