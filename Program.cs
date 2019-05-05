@@ -14,43 +14,70 @@ namespace ExcelTwineroFlow
 
         static void Main(string[] args)
         {
-            ReadExcel(@"C:\Users\Usuario\Documents\Book1.xlsx");
+            string folder = @"C:\Asignacion\" + DateTime.Now.ToString("yyyyMMdd") + " B1TW";
+            System.IO.Directory.CreateDirectory(folder);
+            string outputFile = folder + @"\" + DateTime.Now.ToString("yyyyMMdd") + "_B1TW_Cargar.csv"; 
+            ReadExcel(@"C:\Users\Usuario\Documents\Book1.xlsx", outputFile);
             Console.ReadLine();
         }
 
-        static public void ReadExcel(string _path)
+        static public void ReadExcel(string _pathInput, string _pathOutput)
         {
             
                 Excel.Application _xlApp = new Excel.Application();
-                Excel.Workbook _xlWorkbook = _xlApp.Workbooks.Open(@_path);
+                Excel.Workbook _xlWorkbook = _xlApp.Workbooks.Open(_pathInput);
                 Excel._Worksheet _xlWorksheet = _xlWorkbook.Sheets[1];
                 Excel.Range _xlRange = _xlWorksheet.UsedRange;
                 int rowCount = _xlRange.Rows.Count;
                 int colCount = _xlRange.Columns.Count;
-                int[] _puntero = new int[] { 0, 19, 15, 16, 22, 24, 25, 23, 21, 17, 18, 2, 3, colCount, 26, 5, 8, 9, 10, 11, colCount, colCount, 14, 20, colCount, colCount };
+                int[] _puntero = new int[] { 0, 19, 15, 16, 22, 24, 25, 23, 21, 17, 18, colCount, 2, 3, colCount, 26, 5, 8, 9, 10, 11, colCount, colCount, 14, 20, colCount, colCount };
             try
             {
-                for (int i = 2; i <= rowCount; i++)
-                {
-                    List<string> _currRow = new List<string>();
-                    for (int j = 0; j < _puntero.Length; j++)
-                    {
-                        string _currValue;
-                        if (_xlRange.Cells[i, _puntero[j] + 1] != null && _xlRange.Cells[i, _puntero[j] + 1].Value2 != null)
+                FileStream fs = new FileStream(_pathOutput, FileMode.Append);
+                using (StreamWriter writer = new StreamWriter(fs, Encoding.Default))
+                {                     
+                        List<string> _currRow = new List<string>();
+                        string _currValue = "";
+
+                        //Add headers. Keep in mind Excel index starts on 1
+                        for (int j = 0; j < _puntero.Length; j++)
                         {
-                            _currValue = RemoveChars(_xlRange.Cells[i, _puntero[j] + 1].Value2.ToString());
+                            if (_xlRange.Cells[1, _puntero[j] + 1] != null && _xlRange.Cells[1, _puntero[j] + 1].Value2 != null)
+                            {
+                                _currValue = RemoveChars(_xlRange.Cells[1, _puntero[j] + 1].Value2.ToString());
+                            }
+                            else
+                            {
+                                _currValue = "";
+                            }
+                            _currRow.Add(_currValue);
                         }
-                        else
+                        writer.WriteLine(String.Join(";", _currRow));
+
+
+                        //Add data, row by row to _pathOutput csv file
+                        for (int i = 2; i <= rowCount; i++)
                         {
-                            _currValue = "";
+                            _currRow = new List<string>();
+                            for (int j = 0; j < _puntero.Length; j++)
+                            {
+
+                                if (_xlRange.Cells[i, _puntero[j] + 1] != null && _xlRange.Cells[i, _puntero[j] + 1].Value2 != null)
+                                {
+                                    _currValue = RemoveChars(_xlRange.Cells[i, _puntero[j] + 1].Value2.ToString());
+                                }
+                                else
+                                {
+                                    _currValue = "";
+                                }
+                                _currRow.Add(_currValue);
+
+                            }
+
+                            _currRow = FormatRow(_currRow);
+
+                            writer.WriteLine(String.Join(";", _currRow));
                         }
-                        _currRow.Add(_currValue);
-
-                    }
-
-                    _currRow = FormatRow(_currRow);
-
-                    Console.WriteLine(String.Join(";", _currRow));
                 }
             }
             finally
@@ -74,7 +101,7 @@ namespace ExcelTwineroFlow
 
         static string DepuraFecha(string _fechain)
         {
-
+            int fechadia;
             if (_fechain.Contains("-"))
             {
                 string[] _fechasplit = _fechain.Split('-');
@@ -83,7 +110,16 @@ namespace ExcelTwineroFlow
             } else if (_fechain.Contains("/"))
             {
                 return _fechain;
-            } else
+            }
+            else if (_fechain =="")
+            {
+                return _fechain;
+            }
+            else if (Int32.TryParse(_fechain, out fechadia))
+            {
+                return Convert.ToDateTime("1900-01-01").AddDays(fechadia).ToString("dd/MM/yyyy");
+            }
+            else
             {
                 throw new Exception("FECHA INVALIDA");
             }
@@ -192,13 +228,14 @@ namespace ExcelTwineroFlow
             //Provincia de CP
             _output[6] = DepuraProv(_output[7]);
             //Fechas
-            _output[11] = DepuraFecha(_output[11]);
-            _output[15] = DepuraFecha(_output[15]);
+            _output[12] = DepuraFecha(_output[12]);
+            _output[16] = DepuraFecha(_output[16]);
             _output[23] = DepuraFecha(_output[23]);
+            _output[24] = DepuraFecha(_output[24]);
             //Nacionalidad
-            _output[24] = Nacionalidad(_output[24]);
+            _output[25] = Nacionalidad(_output[1]);
             //Cartera
-            _output[25] = "TWINERO S.L";
+            _output[26] = "TWINERO S.L";
             return _output;
         }
         static string Nacionalidad(string _input)
