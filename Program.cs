@@ -23,7 +23,7 @@ namespace ExcelTwineroFlow
 
         static public void ReadExcel(string _pathInput, string _pathOutput)
         {
-            
+                //I hate Excel
                 Excel.Application _xlApp = new Excel.Application();
                 Excel.Workbook _xlWorkbook = _xlApp.Workbooks.Open(_pathInput);
                 Excel._Worksheet _xlWorksheet = _xlWorkbook.Sheets[1];
@@ -35,49 +35,48 @@ namespace ExcelTwineroFlow
             {
                 FileStream fs = new FileStream(_pathOutput, FileMode.Append);
                 using (StreamWriter writer = new StreamWriter(fs, Encoding.Default))
-                {                     
-                        List<string> _currRow = new List<string>();
-                        string _currValue = "";
+                {
+                    List<string> _currRow = new List<string>();
+                    string _currValue = "";
 
-                        //Add headers. Keep in mind Excel index starts on 1
+                    //Add headers. Keep in mind Excel index starts on 1. First for the headers instead of an "if" statement.
+                    for (int j = 0; j < _puntero.Length; j++)
+                    {
+                        if (_xlRange.Cells[1, _puntero[j] + 1] != null && _xlRange.Cells[1, _puntero[j] + 1].Value2 != null)
+                        {
+                            _currValue = RemoveChars(_xlRange.Cells[1, _puntero[j] + 1].Value2.ToString());
+                        }
+                        else
+                        {
+                            _currValue = "";
+                        }
+                        _currRow.Add(_currValue);
+                    }
+                    writer.WriteLine(String.Join(";", _currRow));
+
+
+                    //Add data, row by row to _pathOutput csv file
+                    for (int i = 2; i <= rowCount; i++)
+                    {
+                        _currRow = new List<string>();
                         for (int j = 0; j < _puntero.Length; j++)
                         {
-                            if (_xlRange.Cells[1, _puntero[j] + 1] != null && _xlRange.Cells[1, _puntero[j] + 1].Value2 != null)
+
+                            if (_xlRange.Cells[i, _puntero[j] + 1] != null && _xlRange.Cells[i, _puntero[j] + 1].Value2 != null)
                             {
-                                _currValue = RemoveChars(_xlRange.Cells[1, _puntero[j] + 1].Value2.ToString());
+                                _currValue = RemoveChars(_xlRange.Cells[i, _puntero[j] + 1].Value2.ToString());
                             }
                             else
                             {
                                 _currValue = "";
                             }
                             _currRow.Add(_currValue);
+
                         }
+
+                        _currRow = FormatRow(_currRow);
                         writer.WriteLine(String.Join(";", _currRow));
-
-
-                        //Add data, row by row to _pathOutput csv file
-                        for (int i = 2; i <= rowCount; i++)
-                        {
-                            _currRow = new List<string>();
-                            for (int j = 0; j < _puntero.Length; j++)
-                            {
-
-                                if (_xlRange.Cells[i, _puntero[j] + 1] != null && _xlRange.Cells[i, _puntero[j] + 1].Value2 != null)
-                                {
-                                    _currValue = RemoveChars(_xlRange.Cells[i, _puntero[j] + 1].Value2.ToString());
-                                }
-                                else
-                                {
-                                    _currValue = "";
-                                }
-                                _currRow.Add(_currValue);
-
-                            }
-
-                            _currRow = FormatRow(_currRow);
-
-                            writer.WriteLine(String.Join(";", _currRow));
-                        }
+                    }
                 }
             }
             finally
