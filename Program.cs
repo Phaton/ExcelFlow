@@ -99,7 +99,6 @@ namespace ExcelTwineroFlow
                 Marshal.ReleaseComObject(_xlApp);
             }
         }
-
         static string DepuraFecha(string _fechain)
         {
             int fechadia;
